@@ -36,6 +36,12 @@ const config: ExpoConfig = {
         backgroundColor: "#FBF9F6",
       },
     ],
+    [
+      "expo-image-picker",
+      {
+        photosPermission: "Pawhood uses your photos to set your profile and dog pictures.",
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,
