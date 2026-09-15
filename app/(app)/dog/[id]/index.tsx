@@ -1,15 +1,17 @@
-import { Link, Stack, useLocalSearchParams } from "expo-router";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Link, router, Stack, useLocalSearchParams } from "expo-router";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 
 import { Avatar, Button, Screen, Text } from "@/components";
 import { useAuth } from "@/features/auth/AuthProvider";
 import { useDog } from "@/features/dogs/useDog";
+import { useStartConversation } from "@/features/messaging/useStartConversation";
 import { colors, radii, spacing } from "@/theme/tokens";
 
 export default function DogProfile() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: dog, isLoading } = useDog(id);
   const { session } = useAuth();
+  const startConversation = useStartConversation();
 
   if (isLoading || !dog) {
     return (
@@ -64,7 +66,29 @@ export default function DogProfile() {
           <Link href={{ pathname: "/(app)/dog/[id]/edit", params: { id: dog.id } }} asChild>
             <Button label="Edit" variant="secondary" style={{ marginTop: spacing.xxl }} />
           </Link>
-        ) : null}
+        ) : (
+          <Button
+            label="Message"
+            loading={startConversation.isPending}
+            style={{ marginTop: spacing.xxl }}
+            onPress={() =>
+              startConversation.mutate(dog.owner_id, {
+                onSuccess: (conversationId) => {
+                  router.push({
+                    pathname: "/(app)/conversation/[id]",
+                    params: { id: conversationId },
+                  });
+                },
+                onError: (err) => {
+                  Alert.alert(
+                    "Couldn't start conversation",
+                    err instanceof Error ? err.message : "Try again.",
+                  );
+                },
+              })
+            }
+          />
+        )}
       </ScrollView>
     </Screen>
   );

@@ -141,6 +141,44 @@ export type NearbyDog = {
   distance_band: string;
 };
 
+export type ConversationsRow = {
+  id: string;
+  created_at: string;
+  last_message_at: string;
+};
+
+// Conversations/participants are only ever written by the start_conversation
+// RPC (a SECURITY DEFINER function), never inserted directly by the client,
+// but GenericTable still requires Insert/Update shapes.
+export type ConversationsInsert = Record<string, never>;
+export type ConversationsUpdate = Record<string, never>;
+
+export type ConversationParticipantsRow = {
+  conversation_id: string;
+  user_id: string;
+};
+
+export type ConversationParticipantsInsert = ConversationParticipantsRow;
+export type ConversationParticipantsUpdate = Partial<ConversationParticipantsInsert>;
+
+export type MessagesRow = {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  body: string;
+  created_at: string;
+  read_at: string | null;
+  deleted_at: string | null;
+};
+
+export type MessagesInsert = {
+  conversation_id: string;
+  sender_id: string;
+  body: string;
+};
+
+export type MessagesUpdate = Partial<MessagesInsert>;
+
 export type Database = {
   public: {
     Tables: {
@@ -180,6 +218,24 @@ export type Database = {
         Update: UserLocationsUpdate;
         Relationships: [];
       };
+      conversations: {
+        Row: ConversationsRow;
+        Insert: ConversationsInsert;
+        Update: ConversationsUpdate;
+        Relationships: [];
+      };
+      conversation_participants: {
+        Row: ConversationParticipantsRow;
+        Insert: ConversationParticipantsInsert;
+        Update: ConversationParticipantsUpdate;
+        Relationships: [];
+      };
+      messages: {
+        Row: MessagesRow;
+        Insert: MessagesInsert;
+        Update: MessagesUpdate;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -190,6 +246,10 @@ export type Database = {
           radius_meters?: number;
         };
         Returns: NearbyDog[];
+      };
+      start_conversation: {
+        Args: { other_user_id: string };
+        Returns: string;
       };
     };
   };
