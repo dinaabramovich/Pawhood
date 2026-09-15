@@ -58,6 +58,37 @@ export type DogsInsert = {
 
 export type DogsUpdate = Partial<DogsInsert>;
 
+export type ParkAmenities = {
+  fenced?: boolean;
+  water?: boolean;
+  lighting?: boolean;
+};
+
+export type ParksRow = {
+  id: string;
+  name: string;
+  description: string | null;
+  lat: number;
+  lng: number;
+  address: string | null;
+  amenities: ParkAmenities;
+  photo_urls: string[];
+  created_at: string;
+  updated_at: string;
+};
+
+// Parks are seeded via SQL in this MVP, not created through the client, but
+// GenericTable still requires Insert/Update shapes.
+export type ParksInsert = {
+  name: string;
+  description?: string | null;
+  address?: string | null;
+  amenities?: ParkAmenities;
+  photo_urls?: string[];
+};
+
+export type ParksUpdate = Partial<ParksInsert>;
+
 export type Database = {
   public: {
     Tables: {
@@ -71,6 +102,12 @@ export type Database = {
         Row: DogsRow;
         Insert: DogsInsert;
         Update: DogsUpdate;
+        Relationships: [];
+      };
+      parks: {
+        Row: ParksRow;
+        Insert: ParksInsert;
+        Update: ParksUpdate;
         Relationships: [];
       };
     };

@@ -42,6 +42,13 @@ const config: ExpoConfig = {
         photosPermission: "Pawhood uses your photos to set your profile and dog pictures.",
       },
     ],
+    [
+      "react-native-maps",
+      {
+        iosGoogleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_IOS_API_KEY,
+        androidGoogleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_API_KEY,
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,

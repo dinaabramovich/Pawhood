@@ -1,4 +1,4 @@
-import { Link, Redirect } from "expo-router";
+import { Link } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { Avatar, Button, Screen, Text } from "@/components";
@@ -7,32 +7,16 @@ import { useMyDogs } from "@/features/dogs/useMyDogs";
 import { useMyProfile } from "@/features/profile/useMyProfile";
 import { colors, radii, spacing } from "@/theme/tokens";
 
-export default function AppHome() {
-  const { data: profile, isLoading: profileLoading } = useMyProfile();
-  const { data: dogs, isLoading: dogsLoading } = useMyDogs();
-
-  if (profileLoading) {
-    return (
-      <Screen>
-        <View style={{ flex: 1 }} />
-      </Screen>
-    );
-  }
+export default function Profile() {
+  const { data: profile } = useMyProfile();
+  const { data: dogs } = useMyDogs();
 
   if (!profile) {
-    return <Redirect href="/(app)/edit-profile" />;
-  }
-
-  if (dogsLoading) {
     return (
       <Screen>
         <View style={{ flex: 1 }} />
       </Screen>
     );
-  }
-
-  if (!dogs || dogs.length === 0) {
-    return <Redirect href="/(app)/create-dog" />;
   }
 
   return (
@@ -51,7 +35,7 @@ export default function AppHome() {
         <Text variant="subtitle" style={{ marginBottom: spacing.md }}>
           Your dogs
         </Text>
-        {dogs.map((dog) => (
+        {dogs?.map((dog) => (
           <Link
             key={dog.id}
             href={{ pathname: "/(app)/dog/[id]/edit", params: { id: dog.id } }}
@@ -74,14 +58,6 @@ export default function AppHome() {
         <Link href="/(app)/create-dog" asChild>
           <Button label="Add another dog" variant="secondary" style={{ marginTop: spacing.sm }} />
         </Link>
-
-        <Text
-          variant="caption"
-          color="textSecondary"
-          style={{ marginTop: spacing.xxl, textAlign: "center" }}
-        >
-          The park map lands in the next milestone.
-        </Text>
 
         <Link href="/(app)/edit-profile" asChild>
           <Button label="Edit profile" variant="ghost" style={{ marginTop: spacing.xl }} />
