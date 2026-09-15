@@ -38,7 +38,7 @@ function formatVisitTime(iso: string) {
 export function GoingSection({ parkId }: { parkId: string }) {
   const { session } = useAuth();
   const userId = session?.user.id as string;
-  const { data: visits } = useParkVisits(parkId);
+  const { data: visits, error: visitsError, refetch: refetchVisits } = useParkVisits(parkId);
   const { data: dogs } = useMyDogs();
   const queryClient = useQueryClient();
   const [pickingTime, setPickingTime] = useState(false);
@@ -76,7 +76,14 @@ export function GoingSection({ parkId }: { parkId: string }) {
         Who&rsquo;s going
       </Text>
 
-      {visits && visits.length > 0 ? (
+      {visitsError ? (
+        <View style={{ marginBottom: spacing.lg }}>
+          <Text variant="body" color="textSecondary" style={{ marginBottom: spacing.md }}>
+            {visitsError instanceof Error ? visitsError.message : "Couldn't load who's going."}
+          </Text>
+          <Button label="Try again" variant="secondary" onPress={() => refetchVisits()} />
+        </View>
+      ) : visits && visits.length > 0 ? (
         visits.map((visit) => (
           <View
             key={visit.id}

@@ -15,7 +15,7 @@ const config: ExpoConfig = {
   android: {
     package: "com.pawhood.app",
     adaptiveIcon: {
-      backgroundColor: "#E6F4FE",
+      backgroundColor: "#D97757",
       foregroundImage: "./assets/android-icon-foreground.png",
       backgroundImage: "./assets/android-icon-background.png",
       monochromeImage: "./assets/android-icon-monochrome.png",
@@ -54,6 +54,13 @@ const config: ExpoConfig = {
       {
         locationWhenInUsePermission:
           "Pawhood uses your location to show nearby dog parks and dogs. Your exact location is never shown to other users.",
+      },
+    ],
+    [
+      "expo-notifications",
+      {
+        icon: "./assets/android-icon-foreground.png",
+        color: "#D97757",
       },
     ],
   ],

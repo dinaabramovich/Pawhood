@@ -1,12 +1,12 @@
 import { router } from "expo-router";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 
-import { Avatar, Screen, Text } from "@/components";
+import { Avatar, Button, Screen, Text } from "@/components";
 import { useConversations } from "@/features/messaging/useConversations";
 import { colors, radii, spacing } from "@/theme/tokens";
 
 export default function Messages() {
-  const { data: conversations, isLoading } = useConversations();
+  const { data: conversations, isLoading, error, refetch, isRefetching } = useConversations();
 
   return (
     <Screen edges={["top", "bottom"]}>
@@ -14,12 +14,21 @@ export default function Messages() {
         Messages
       </Text>
 
-      {isLoading ? (
+      {error ? (
+        <View style={{ paddingVertical: spacing.xl }}>
+          <Text variant="body" color="textSecondary" style={{ marginBottom: spacing.lg }}>
+            {error instanceof Error ? error.message : "Couldn't load your conversations."}
+          </Text>
+          <Button label="Try again" variant="secondary" onPress={() => refetch()} />
+        </View>
+      ) : isLoading ? (
         <View style={{ flex: 1 }} />
       ) : conversations && conversations.length > 0 ? (
         <FlatList
           data={conversations}
           keyExtractor={(item) => item.id}
+          refreshing={isRefetching}
+          onRefresh={() => refetch()}
           renderItem={({ item }) => (
             <Pressable
               onPress={() =>

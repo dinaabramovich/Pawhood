@@ -215,6 +215,23 @@ export type BlockedUsersInsert = {
 
 export type BlockedUsersUpdate = Partial<BlockedUsersInsert>;
 
+export type PushPlatform = "ios" | "android";
+
+export type PushTokensRow = {
+  user_id: string;
+  token: string;
+  platform: PushPlatform;
+  updated_at: string;
+};
+
+export type PushTokensInsert = {
+  user_id: string;
+  token: string;
+  platform: PushPlatform;
+};
+
+export type PushTokensUpdate = Partial<PushTokensInsert>;
+
 export type Database = {
   public: {
     Tables: {
@@ -282,6 +299,12 @@ export type Database = {
         Row: BlockedUsersRow;
         Insert: BlockedUsersInsert;
         Update: BlockedUsersUpdate;
+        Relationships: [];
+      };
+      push_tokens: {
+        Row: PushTokensRow;
+        Insert: PushTokensInsert;
+        Update: PushTokensUpdate;
         Relationships: [];
       };
     };

@@ -7,13 +7,20 @@ import { useUnblockUser } from "@/features/safety/useUnblockUser";
 import { spacing } from "@/theme/tokens";
 
 export default function BlockedUsers() {
-  const { data: blocked, isLoading } = useBlockedUsers();
+  const { data: blocked, isLoading, error, refetch } = useBlockedUsers();
   const unblock = useUnblockUser();
 
   return (
     <Screen edges={["top", "bottom"]}>
       <Stack.Screen options={{ headerShown: true, title: "Blocked users" }} />
-      {isLoading ? (
+      {error ? (
+        <View style={{ marginTop: spacing.lg }}>
+          <Text variant="body" color="textSecondary" style={{ marginBottom: spacing.lg }}>
+            {error instanceof Error ? error.message : "Couldn't load blocked users."}
+          </Text>
+          <Button label="Try again" variant="secondary" onPress={() => refetch()} />
+        </View>
+      ) : isLoading ? (
         <View style={{ flex: 1 }} />
       ) : blocked && blocked.length > 0 ? (
         <FlatList
