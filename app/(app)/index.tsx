@@ -1,15 +1,17 @@
 import { Link, Redirect } from "expo-router";
-import { View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 
 import { Avatar, Button, Screen, Text } from "@/components";
 import { signOut } from "@/features/auth/api";
+import { useMyDogs } from "@/features/dogs/useMyDogs";
 import { useMyProfile } from "@/features/profile/useMyProfile";
-import { spacing } from "@/theme/tokens";
+import { colors, radii, spacing } from "@/theme/tokens";
 
 export default function AppHome() {
-  const { data: profile, isLoading } = useMyProfile();
+  const { data: profile, isLoading: profileLoading } = useMyProfile();
+  const { data: dogs, isLoading: dogsLoading } = useMyDogs();
 
-  if (isLoading) {
+  if (profileLoading) {
     return (
       <Screen>
         <View style={{ flex: 1 }} />
@@ -21,32 +23,84 @@ export default function AppHome() {
     return <Redirect href="/(app)/edit-profile" />;
   }
 
+  if (dogsLoading) {
+    return (
+      <Screen>
+        <View style={{ flex: 1 }} />
+      </Screen>
+    );
+  }
+
+  if (!dogs || dogs.length === 0) {
+    return <Redirect href="/(app)/create-dog" />;
+  }
+
   return (
     <Screen>
-      <View style={{ flex: 1, justifyContent: "center", gap: spacing.sm }}>
-        <View style={{ alignItems: "center", marginBottom: spacing.lg }}>
-          <Avatar uri={profile.avatar_url} name={profile.display_name} size={80} />
+      <View style={{ flex: 1, paddingTop: spacing.xxl }}>
+        <View style={{ alignItems: "center", marginBottom: spacing.xxl }}>
+          <Avatar uri={profile.avatar_url} name={profile.display_name} size={72} />
+          <Text variant="title" style={{ marginTop: spacing.md }}>
+            {profile.display_name}
+          </Text>
+          <Text variant="body" color="textSecondary">
+            {profile.city}
+          </Text>
         </View>
-        <Text variant="title" style={{ textAlign: "center" }}>
-          {profile.display_name}
+
+        <Text variant="subtitle" style={{ marginBottom: spacing.md }}>
+          Your dogs
         </Text>
-        <Text variant="body" color="textSecondary" style={{ textAlign: "center" }}>
-          {profile.city}
-        </Text>
-        <Text variant="caption" color="textSecondary" style={{ textAlign: "center" }}>
-          Dog profiles and the park map land in the next milestones.
+        {dogs.map((dog) => (
+          <Link
+            key={dog.id}
+            href={{ pathname: "/(app)/dog/[id]/edit", params: { id: dog.id } }}
+            asChild
+          >
+            <Pressable style={styles.dogRow}>
+              <Avatar uri={dog.photo_urls[0] ?? null} name={dog.name} size={48} />
+              <View style={{ marginLeft: spacing.md }}>
+                <Text variant="bodyStrong">{dog.name}</Text>
+                {dog.breed ? (
+                  <Text variant="caption" color="textSecondary">
+                    {dog.breed}
+                  </Text>
+                ) : null}
+              </View>
+            </Pressable>
+          </Link>
+        ))}
+
+        <Link href="/(app)/create-dog" asChild>
+          <Button label="Add another dog" variant="secondary" style={{ marginTop: spacing.sm }} />
+        </Link>
+
+        <Text
+          variant="caption"
+          color="textSecondary"
+          style={{ marginTop: spacing.xxl, textAlign: "center" }}
+        >
+          The park map lands in the next milestone.
         </Text>
 
         <Link href="/(app)/edit-profile" asChild>
-          <Button label="Edit profile" variant="secondary" style={{ marginTop: spacing.xl }} />
+          <Button label="Edit profile" variant="ghost" style={{ marginTop: spacing.xl }} />
         </Link>
-        <Button
-          label="Sign out"
-          variant="ghost"
-          onPress={() => signOut()}
-          style={{ marginTop: spacing.sm }}
-        />
+        <Button label="Sign out" variant="ghost" onPress={() => signOut()} />
       </View>
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  dogRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
+    marginBottom: spacing.md,
+  },
+});

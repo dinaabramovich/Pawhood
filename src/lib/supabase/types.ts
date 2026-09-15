@@ -24,6 +24,40 @@ export type UsersInsert = {
 
 export type UsersUpdate = Partial<UsersInsert>;
 
+export type DogSize = "small" | "medium" | "large";
+export type DogGender = "male" | "female";
+export type DogEnergyLevel = "low" | "medium" | "high";
+
+export type DogsRow = {
+  id: string;
+  owner_id: string;
+  name: string;
+  breed: string | null;
+  birth_date: string | null;
+  size: DogSize | null;
+  gender: DogGender | null;
+  energy_level: DogEnergyLevel | null;
+  bio: string | null;
+  photo_urls: string[];
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DogsInsert = {
+  owner_id: string;
+  name: string;
+  breed?: string | null;
+  birth_date?: string | null;
+  size?: DogSize | null;
+  gender?: DogGender | null;
+  energy_level?: DogEnergyLevel | null;
+  bio?: string | null;
+  photo_urls?: string[];
+};
+
+export type DogsUpdate = Partial<DogsInsert>;
+
 export type Database = {
   public: {
     Tables: {
@@ -31,6 +65,12 @@ export type Database = {
         Row: UsersRow;
         Insert: UsersInsert;
         Update: UsersUpdate;
+        Relationships: [];
+      };
+      dogs: {
+        Row: DogsRow;
+        Insert: DogsInsert;
+        Update: DogsUpdate;
         Relationships: [];
       };
     };
