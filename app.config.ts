@@ -49,6 +49,13 @@ const config: ExpoConfig = {
         androidGoogleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_API_KEY,
       },
     ],
+    [
+      "expo-location",
+      {
+        locationWhenInUsePermission:
+          "Pawhood uses your location to show nearby dog parks and dogs. Your exact location is never shown to other users.",
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,

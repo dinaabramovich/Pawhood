@@ -36,11 +36,7 @@ export default function Profile() {
           Your dogs
         </Text>
         {dogs?.map((dog) => (
-          <Link
-            key={dog.id}
-            href={{ pathname: "/(app)/dog/[id]/edit", params: { id: dog.id } }}
-            asChild
-          >
+          <Link key={dog.id} href={{ pathname: "/(app)/dog/[id]", params: { id: dog.id } }} asChild>
             <Pressable style={styles.dogRow}>
               <Avatar uri={dog.photo_urls[0] ?? null} name={dog.name} size={48} />
               <View style={{ marginLeft: spacing.md }}>

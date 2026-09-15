@@ -113,6 +113,34 @@ export type VisitDogsRow = {
 export type VisitDogsInsert = VisitDogsRow;
 export type VisitDogsUpdate = Partial<VisitDogsInsert>;
 
+// user_locations is never read back by the client in this app (the device
+// always has a fresher GPS fix than anything we'd cache), so `location` is
+// only ever written, as an EWKT string ("SRID=4326;POINT(lng lat)") that
+// Postgres's geography input parser accepts over PostgREST.
+export type UserLocationsRow = {
+  user_id: string;
+  location: string;
+  accuracy_m: number | null;
+  updated_at: string;
+};
+
+export type UserLocationsInsert = {
+  user_id: string;
+  location: string;
+  accuracy_m?: number | null;
+};
+
+export type UserLocationsUpdate = Partial<UserLocationsInsert>;
+
+export type NearbyDog = {
+  dog_id: string;
+  dog_name: string;
+  dog_photo_url: string | null;
+  owner_display_name: string;
+  owner_avatar_url: string | null;
+  distance_band: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -146,8 +174,23 @@ export type Database = {
         Update: VisitDogsUpdate;
         Relationships: [];
       };
+      user_locations: {
+        Row: UserLocationsRow;
+        Insert: UserLocationsInsert;
+        Update: UserLocationsUpdate;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      nearby_dogs: {
+        Args: {
+          requester_lat: number;
+          requester_lng: number;
+          radius_meters?: number;
+        };
+        Returns: NearbyDog[];
+      };
+    };
   };
 };

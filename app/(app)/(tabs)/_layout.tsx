@@ -24,6 +24,13 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="nearby"
+        options={{
+          title: "Nearby",
+          tabBarIcon: ({ color, size }) => <Ionicons name="paw" size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
