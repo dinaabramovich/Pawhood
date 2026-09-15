@@ -179,6 +179,42 @@ export type MessagesInsert = {
 
 export type MessagesUpdate = Partial<MessagesInsert>;
 
+export type ReportTargetType = "user" | "dog" | "message" | "park";
+
+export type ReportsRow = {
+  id: string;
+  reporter_id: string;
+  target_type: ReportTargetType;
+  target_id: string;
+  reason: string;
+  details: string | null;
+  status: string;
+  created_at: string;
+};
+
+export type ReportsInsert = {
+  reporter_id: string;
+  target_type: ReportTargetType;
+  target_id: string;
+  reason: string;
+  details?: string | null;
+};
+
+export type ReportsUpdate = Partial<ReportsInsert>;
+
+export type BlockedUsersRow = {
+  blocker_id: string;
+  blocked_id: string;
+  created_at: string;
+};
+
+export type BlockedUsersInsert = {
+  blocker_id: string;
+  blocked_id: string;
+};
+
+export type BlockedUsersUpdate = Partial<BlockedUsersInsert>;
+
 export type Database = {
   public: {
     Tables: {
@@ -234,6 +270,18 @@ export type Database = {
         Row: MessagesRow;
         Insert: MessagesInsert;
         Update: MessagesUpdate;
+        Relationships: [];
+      };
+      reports: {
+        Row: ReportsRow;
+        Insert: ReportsInsert;
+        Update: ReportsUpdate;
+        Relationships: [];
+      };
+      blocked_users: {
+        Row: BlockedUsersRow;
+        Insert: BlockedUsersInsert;
+        Update: BlockedUsersUpdate;
         Relationships: [];
       };
     };

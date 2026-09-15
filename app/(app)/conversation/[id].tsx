@@ -1,4 +1,4 @@
-import { Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useRef, useState } from "react";
 import {
   FlatList,
@@ -13,7 +13,10 @@ import {
 import { Screen, Text } from "@/components";
 import { useAuth } from "@/features/auth/AuthProvider";
 import { useMessages } from "@/features/messaging/useMessages";
+import { useOtherParticipant } from "@/features/messaging/useOtherParticipant";
 import { useSendMessage } from "@/features/messaging/useSendMessage";
+import { BlockButton } from "@/features/safety/BlockButton";
+import { ReportButton } from "@/features/safety/ReportButton";
 import type { MessagesRow } from "@/lib/supabase/types";
 import { colors, radii, spacing } from "@/theme/tokens";
 
@@ -22,6 +25,7 @@ export default function Conversation() {
   const { session } = useAuth();
   const myId = session?.user.id;
   const { data: messages } = useMessages(id);
+  const { data: otherUser } = useOtherParticipant(id);
   const sendMessage = useSendMessage(id);
   const [draft, setDraft] = useState("");
   const listRef = useRef<FlatList<MessagesRow>>(null);
@@ -35,7 +39,17 @@ export default function Conversation() {
 
   return (
     <Screen edges={["top", "bottom"]}>
-      <Stack.Screen options={{ headerShown: true, title: "" }} />
+      <Stack.Screen options={{ headerShown: true, title: otherUser?.display_name ?? "" }} />
+      {otherUser ? (
+        <View style={styles.actionsRow}>
+          <ReportButton targetType="user" targetId={otherUser.id} />
+          <BlockButton
+            targetUserId={otherUser.id}
+            targetName={otherUser.display_name}
+            onBlocked={() => router.back()}
+          />
+        </View>
+      ) : null}
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -85,6 +99,11 @@ export default function Conversation() {
 }
 
 const styles = StyleSheet.create({
+  actionsRow: {
+    paddingBottom: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
   bubble: {
     maxWidth: "78%",
     borderRadius: radii.lg,

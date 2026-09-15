@@ -102,3 +102,23 @@ export async function startConversation(otherUserId: string): Promise<string> {
   if (error) throw error;
   return data;
 }
+
+export type ConversationParticipant = {
+  id: string;
+  display_name: string;
+  avatar_url: string | null;
+};
+
+export async function getOtherParticipant(
+  conversationId: string,
+  myUserId: string,
+): Promise<ConversationParticipant | null> {
+  const { data, error } = await supabase
+    .from("conversation_participants")
+    .select("users(id, display_name, avatar_url)")
+    .eq("conversation_id", conversationId)
+    .neq("user_id", myUserId)
+    .maybeSingle();
+  if (error) throw error;
+  return (data?.users as unknown as ConversationParticipant) ?? null;
+}

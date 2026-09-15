@@ -5,6 +5,9 @@ import { Avatar, Button, Screen, Text } from "@/components";
 import { useAuth } from "@/features/auth/AuthProvider";
 import { useDog } from "@/features/dogs/useDog";
 import { useStartConversation } from "@/features/messaging/useStartConversation";
+import { useProfile } from "@/features/profile/useProfile";
+import { BlockButton } from "@/features/safety/BlockButton";
+import { ReportButton } from "@/features/safety/ReportButton";
 import { colors, radii, spacing } from "@/theme/tokens";
 
 export default function DogProfile() {
@@ -12,6 +15,7 @@ export default function DogProfile() {
   const { data: dog, isLoading } = useDog(id);
   const { session } = useAuth();
   const startConversation = useStartConversation();
+  const { data: owner } = useProfile(dog?.owner_id);
 
   if (isLoading || !dog) {
     return (
@@ -37,6 +41,11 @@ export default function DogProfile() {
         {dog.breed ? (
           <Text variant="body" color="textSecondary">
             {dog.breed}
+          </Text>
+        ) : null}
+        {owner ? (
+          <Text variant="caption" color="textSecondary" style={{ marginTop: spacing.xs }}>
+            Owned by {owner.display_name}
           </Text>
         ) : null}
 
@@ -67,27 +76,34 @@ export default function DogProfile() {
             <Button label="Edit" variant="secondary" style={{ marginTop: spacing.xxl }} />
           </Link>
         ) : (
-          <Button
-            label="Message"
-            loading={startConversation.isPending}
-            style={{ marginTop: spacing.xxl }}
-            onPress={() =>
-              startConversation.mutate(dog.owner_id, {
-                onSuccess: (conversationId) => {
-                  router.push({
-                    pathname: "/(app)/conversation/[id]",
-                    params: { id: conversationId },
-                  });
-                },
-                onError: (err) => {
-                  Alert.alert(
-                    "Couldn't start conversation",
-                    err instanceof Error ? err.message : "Try again.",
-                  );
-                },
-              })
-            }
-          />
+          <>
+            <Button
+              label="Message"
+              loading={startConversation.isPending}
+              style={{ marginTop: spacing.xxl }}
+              onPress={() =>
+                startConversation.mutate(dog.owner_id, {
+                  onSuccess: (conversationId) => {
+                    router.push({
+                      pathname: "/(app)/conversation/[id]",
+                      params: { id: conversationId },
+                    });
+                  },
+                  onError: (err) => {
+                    Alert.alert(
+                      "Couldn't start conversation",
+                      err instanceof Error ? err.message : "Try again.",
+                    );
+                  },
+                })
+              }
+            />
+            <BlockButton
+              targetUserId={dog.owner_id}
+              targetName={owner?.display_name ?? "this user"}
+            />
+            <ReportButton targetType="user" targetId={dog.owner_id} />
+          </>
         )}
       </ScrollView>
     </Screen>

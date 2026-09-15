@@ -58,6 +58,9 @@ export default function Profile() {
         <Link href="/(app)/edit-profile" asChild>
           <Button label="Edit profile" variant="ghost" style={{ marginTop: spacing.xl }} />
         </Link>
+        <Link href="/(app)/blocked-users" asChild>
+          <Button label="Blocked users" variant="ghost" />
+        </Link>
         <Button label="Sign out" variant="ghost" onPress={() => signOut()} />
       </View>
     </Screen>
