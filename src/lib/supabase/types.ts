@@ -89,6 +89,30 @@ export type ParksInsert = {
 
 export type ParksUpdate = Partial<ParksInsert>;
 
+export type ParkVisitsRow = {
+  id: string;
+  user_id: string;
+  park_id: string;
+  visit_time: string;
+  created_at: string;
+};
+
+export type ParkVisitsInsert = {
+  user_id: string;
+  park_id: string;
+  visit_time: string;
+};
+
+export type ParkVisitsUpdate = Partial<ParkVisitsInsert>;
+
+export type VisitDogsRow = {
+  visit_id: string;
+  dog_id: string;
+};
+
+export type VisitDogsInsert = VisitDogsRow;
+export type VisitDogsUpdate = Partial<VisitDogsInsert>;
+
 export type Database = {
   public: {
     Tables: {
@@ -108,6 +132,18 @@ export type Database = {
         Row: ParksRow;
         Insert: ParksInsert;
         Update: ParksUpdate;
+        Relationships: [];
+      };
+      park_visits: {
+        Row: ParkVisitsRow;
+        Insert: ParkVisitsInsert;
+        Update: ParkVisitsUpdate;
+        Relationships: [];
+      };
+      visit_dogs: {
+        Row: VisitDogsRow;
+        Insert: VisitDogsInsert;
+        Update: VisitDogsUpdate;
         Relationships: [];
       };
     };

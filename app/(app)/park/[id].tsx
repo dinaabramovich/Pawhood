@@ -3,6 +3,7 @@ import { ScrollView, View } from "react-native";
 
 import { Screen, Text } from "@/components";
 import { usePark } from "@/features/parks/usePark";
+import { GoingSection } from "@/features/visits/GoingSection";
 import { spacing } from "@/theme/tokens";
 
 export default function ParkDetails() {
@@ -33,10 +34,9 @@ export default function ParkDetails() {
           </Text>
         ) : null}
 
-        <Text variant="caption" color="textSecondary" style={{ marginTop: spacing.xxl }}>
-          Seeing who&rsquo;s headed here, and marking &ldquo;I&rsquo;m going,&rdquo; lands in the
-          next milestone.
-        </Text>
+        <View style={{ marginTop: spacing.xxl }}>
+          <GoingSection parkId={park.id} />
+        </View>
       </ScrollView>
     </Screen>
   );
